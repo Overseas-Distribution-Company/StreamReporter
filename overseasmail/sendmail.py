@@ -1,6 +1,8 @@
 import smtplib
 import ssl
 import re
+from email import encoders
+from email.mime.base import MIMEBase
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from typing import List
@@ -39,6 +41,7 @@ class OverseasMail:
         self._cc = [first_to] if first_to else []
         self.subject = kwargs.get('subject', '')
         self.message = kwargs.get('body', '')
+        self._attachments = []
 
     @property
     def sender(self):
@@ -70,12 +73,20 @@ class OverseasMail:
             raise ValueError(self._INVALID_MAIL_ERROR)
         self._cc.append(mail_address)
 
+    def add_attachment(self,attachment_path:str):
+        """ Adds an attachment to the mail
+        Args:
+            attachment_path(path):
+        """
+
+        self._attachments.append(attachment_path)
+
     def send_mail(self):
         """ Sends the defined mail.
         """
         mailer = smtplib.SMTP(self._HOST)
         context = ssl.create_default_context()
-        mailer.starttls()
+        mailer.starttls(context=context)
 
         message = MIMEMultipart()
         message["from"] = self._sender
@@ -83,8 +94,17 @@ class OverseasMail:
         message['subject'] = self.subject
         message["Cc"] = ','.join(self._cc)
         message.attach(MIMEText(self.message, 'plain'))
-        print(self._to)
+
+        for file in self._attachments:
+            with open(file, "rb") as attachment:
+                part = MIMEBase('application', 'octet-stream')
+                part.set_payload(attachment.read())
+                encoders.encode_base64(part)
+                part.add_header('Content-Disposition', f'attachment; filename="{file}"')
+                message.attach(part)
         mailer.sendmail(self._sender, self._to, message.as_string())
+
+        mailer.quit()
 
     @staticmethod
     def check_valid_mail(mail_address: str) -> bool:
@@ -98,12 +118,3 @@ class OverseasMail:
         regex = '^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$'
         return True if re.search(regex, mail_address) is not None else False
 
-
-test_obj = OverseasMail()
-
-test_obj.sender = 'testing@overseas.be'
-test_obj.add_receiver('rheirman@overseas.be')
-test_obj.add_cc('robbeheirman@msn.com')
-test_obj.subject = 'plain testing purposes'
-test_obj.message = 'Dit is een test mail'
-test_obj.send_mail()

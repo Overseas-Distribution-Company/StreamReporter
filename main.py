@@ -1,11 +1,12 @@
 import os
 import re
 from datetime import datetime
+from datetime import date
 import cx_Oracle
 from openpyxl import Workbook
 import ExcelWriter
 from new_shortages import new_shortages
-
+from overseasmail import sendmail
 
 
 def purge(dir, pattern):
@@ -86,5 +87,27 @@ ExcelWriter.write_and_format(ws, cursor)
 
 # Finish Up
 str_time = datetime.now().strftime("%d_%m_%y")
-wb.save(f'StreamReport{str_time}.xlsx')
+report_name = f'StreamReport{str_time}.xlsx'
+wb.save(report_name)
 connection.close()
+
+mailer = sendmail.OverseasMail()
+mailer.sender = 'StreamReport@overseas.be'
+mailer.subject = f'Stream Report {date.today().strftime("%d %B, /%Y")}'
+mailer.add_receiver('rheirman@overseas.be')
+mailer.add_cc('rheirman@overseas.be')
+mailer.add_attachment(report_name)
+content = """\
+Beste
+
+In bijlage het stream rapport van deze week.
+NOTE: !!Manu de email adressen stonden niet juist. Ben vergeten naar waar dit rapport moest verstuurd worden!!
+
+Automatische mail, do not reply.
+Vragen? Contacteer rheirman@overseas.be
+
+mvg
+Reporting services Overseas
+"""
+mailer.message = content
+mailer.send_mail()
