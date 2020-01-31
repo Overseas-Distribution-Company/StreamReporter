@@ -6,6 +6,7 @@ from email.mime.base import MIMEBase
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from typing import List
+import pathlib
 
 
 class OverseasMail:
@@ -73,7 +74,7 @@ class OverseasMail:
             raise ValueError(self._INVALID_MAIL_ERROR)
         self._cc.append(mail_address)
 
-    def add_attachment(self,attachment_path:str):
+    def add_attachment(self, attachment_path: str):
         """ Adds an attachment to the mail
         Args:
             attachment_path(path):
@@ -85,8 +86,10 @@ class OverseasMail:
         """ Sends the defined mail.
         """
         mailer = smtplib.SMTP(self._HOST)
-        context = ssl.create_default_context()
-        mailer.starttls(context=context)
+        # path = str(pathlib.Path(__file__).parent.absolute())
+        # context = ssl.create_default_context()
+        # context.load_cert_chain( keyfile=path + "/overseas_wildcard.pem", password='Azerty123')
+        # mailer.starttls(context=context)
 
         message = MIMEMultipart()
         message["from"] = self._sender
@@ -103,7 +106,6 @@ class OverseasMail:
                 part.add_header('Content-Disposition', f'attachment; filename="{file}"')
                 message.attach(part)
         mailer.sendmail(self._sender, self._to, message.as_string())
-
         mailer.quit()
 
     @staticmethod
@@ -117,4 +119,3 @@ class OverseasMail:
         """
         regex = '^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$'
         return True if re.search(regex, mail_address) is not None else False
-
