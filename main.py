@@ -92,13 +92,13 @@ wb.save(report_name)
 connection.close()
 
 mailer = sendmail.OverseasMail()
-# mailer.sender = 'StreamReport@overseas.be'
-# mailer.subject = f'Stream Report {date.today().strftime("%d %B %Y")}'
-# mailer.add_receiver('manueldemaerel@overseas.be')
+mailer.sender = 'StreamReport@overseas.be'
+mailer.subject = f'Stream Report {date.today().strftime("%d %B %Y")}'
+mailer.add_receiver('manueldemaerel@overseas.be')
 mailer.add_receiver('rheirman@overseas.be')
-# mailer.add_receiver('orderprocessing@overseas.be')
-# mailer.add_receiver('Declaration@overseas.be')
-# mailer.add_receiver('PRubenska@overseas.be')
+mailer.add_receiver('orderprocessing@overseas.be')
+mailer.add_receiver('Declaration@overseas.be')
+mailer.add_receiver('PRubenska@overseas.be')
 mailer.add_attachment(report_name)
 content = """\
 Beste
