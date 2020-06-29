@@ -8,5 +8,11 @@
       <jdbc-driver>oracle.jdbc.OracleDriver</jdbc-driver>
       <jdbc-url>jdbc:oracle:thin:@OTC-VS-018:1521:ORAMULT</jdbc-url>
     </data-source>
+    <data-source source="LOCAL" name="Overseas_LIVE@10.0.0.30" uuid="af44d87a-3f42-4225-a752-2c8f7cfe037a">
+      <driver-ref>sqlserver.ms</driver-ref>
+      <synchronize>true</synchronize>
+      <jdbc-driver>com.microsoft.sqlserver.jdbc.SQLServerDriver</jdbc-driver>
+      <jdbc-url>jdbc:sqlserver://10.0.0.30;database=Overseas_LIVE</jdbc-url>
+    </data-source>
   </component>
 </project>

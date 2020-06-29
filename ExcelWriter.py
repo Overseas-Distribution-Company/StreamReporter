@@ -8,6 +8,8 @@ from openpyxl.styles import Alignment
 from openpyxl.worksheet.table import Table, TableStyleInfo
 
 num = 1
+
+
 def write_and_format(sheet, cursor):
     """
     One call func to do it all
@@ -20,7 +22,6 @@ def write_and_format(sheet, cursor):
     -------
     """
     global num
-
     write_cursor_to_sheet(sheet, cursor)
     format_sheet(sheet)
     to_table_format(sheet, num)
@@ -56,6 +57,7 @@ def format_sheet(sheet: worksheet.Worksheet):
         length = max(len(str(cell.value)) for cell in column_cells)
         length, height = split_sizes(length)
         sheet.column_dimensions[utils.get_column_letter(column_cells[0].column)].width = length + 12
+
 
 def to_table_format(sheet: worksheet.Worksheet, num):
     """

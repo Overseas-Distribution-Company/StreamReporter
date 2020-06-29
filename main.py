@@ -3,6 +3,7 @@ import re
 from datetime import datetime
 from datetime import date
 import cx_Oracle
+import pyodbc
 from openpyxl import Workbook
 import ExcelWriter
 from new_shortages import new_shortages
@@ -15,6 +16,37 @@ def purge(dir, pattern):
             os.remove(os.path.join(dir, f))
 
 
+def get_customers(document_no, cursor_l):
+
+    cursor_l.execute(
+        f'''
+        SELECT [Destination No.] nr, sl.name name
+        
+        FROM [ODC$Posted Whse. Shipment Line] sl
+        
+        INNER JOIN [ODC$Customer] cu ON
+            sl.[Destination No.] = cu.[No]
+            
+        WHERE sl.[No.] = {document_no}
+        ''')
+
+    ret_str_no = ''
+    ret_str_name = ''
+    found_no = []
+    for row in cursor:
+        if ret_str_no != '':
+            ret_str_no += ', '
+
+        if ret_str_name != '':
+            ret_str_name = ', '
+
+        if row.no not in found_no:
+            found_no.append(row.no)
+            ret_str_no += row.no
+            ret_str_name += row.name
+
+    return ret_str_no, ret_str_name
+
 # Set-up
 connection = cx_Oracle.connect(
     "overseas4read",  # UID
@@ -23,6 +55,9 @@ connection = cx_Oracle.connect(
 )
 cursor = connection.cursor()
 
+connect2 = pyodbc.connect(f"DRIVER=SQL Server;SERVER=10.0.0.30;"
+                                       f";DATABASE={'Overseas_LIVE'}; UID=sa; PWD=SQLsrv4fr")
+cursor2 = connection.cursor()
 purge(os.getcwd(), '(.*)xlsx')
 wb = Workbook()
 
