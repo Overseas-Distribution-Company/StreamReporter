@@ -7,6 +7,8 @@ from openpyxl import utils
 from openpyxl.styles import Alignment
 from openpyxl.worksheet.table import Table, TableStyleInfo
 
+import main
+
 num = 1
 
 
@@ -25,7 +27,6 @@ def write_and_format(sheet, cursor):
     write_cursor_to_sheet(sheet, cursor)
     format_sheet(sheet)
     to_table_format(sheet, num)
-
     num += 1
 
 
@@ -38,9 +39,16 @@ def write_cursor_to_sheet(sheet: worksheet.Worksheet, cursor: cx_Oracle.Cursor):
     cursor: cx_Oracle cursor prepared with the data
     """
 
-    sheet.append([description[0] for description in cursor.description])
+    header= [description[0] for description in cursor.description]
+    header.append('Customer No')
+    header.append('Customer Name')
+    sheet.append(header)
     for row in cursor:
-        sheet.append(row)
+        customer_details = main.get_customers(row[-1])
+        lst = list(row)
+        lst.append(customer_details[0])
+        lst.append(customer_details[1])
+        sheet.append(lst)
 
 
 def format_sheet(sheet: worksheet.Worksheet):
