@@ -69,7 +69,7 @@ if __name__ == '__main__':
            nc.OPDRACHTGEVER,
            nc.DOSSIERNUMMER_ERP,
            nc.DOCUMENT_REFERENTIENUMMER_MRN,
-           nc.AANGIFTEDATUM,
+           TO_CHAR(TO_DATE(nc.AANGIFTEDATUM, 'yyyymmdd'), 'dd/mm/yyyy') AS AANGIFTEDATUM,
            SUBSTR(nc.DOSSIERNUMMER_ERP,0, INSTR(nc.DOSSIERNUMMER_ERP, '-')-1) AS REF
     FROM NCTS.NCAANGH0 nc
     WHERE ACTIEFBEDRIJF = 'ODC'
@@ -87,7 +87,7 @@ if __name__ == '__main__':
            d.DECLARATIONID,
            d.COMMERCIALREFERENCE,
            d.ARC_AADREFERENCECODE,
-           d.ISSUEDATE,
+           TO_CHAR(TO_DATE(d.ISSUEDATE, 'yyyymmdd'), 'dd/mm/yyyy') AS ISSUEDATE,
            SUBSTR(d.COMMERCIALREFERENCE,0, INSTR(d.COMMERCIALREFERENCE, '-')-1) AS REF
     FROM PLDA.ESDECLARATION d
     
@@ -106,7 +106,7 @@ if __name__ == '__main__':
            d.COMPLEMENTARYINFO,
            d.COMMERCIALREFERENCE,
            d.ARC_AADREFERENCECODE,
-           d.ISSUEDATE,
+           TO_CHAR(TO_DATE(d.ISSUEDATE, 'yyyymmdd'), 'dd/mm/yyyy') AS ISSUEDATE,
            cl.SEQUENCE,
            cl.COMMERCIALDESC,
            cl.QUANTITY,
@@ -134,7 +134,7 @@ if __name__ == '__main__':
             cp.PRINCIPAL,
             cp.COMMERCIALREFERENCE,
             cp.CUSTOMSMAINREFERENCENUMBER,
-            cp.ISSUEDATE,
+            TO_CHAR(TO_DATE(cp.ISSUEDATE, 'yyyymmdd'), 'dd/mm/yyyy') AS ISSUEDATE,
             SUBSTR(cp.COMMERCIALREFERENCE,0, INSTR(cp.COMMERCIALREFERENCE, '-')-1) AS REF
             FROM PLDA.CPDECLARATION cp
             WHERE cp.ACTIVECOMPANY = 'ODC' AND cp.REGIMETYPE = 'A' AND cp.STATUSNUMBER_MESSAGE = 'REL_TRA'
