@@ -122,7 +122,7 @@ if __name__ == '__main__':
       AND d.MESSAGESTATUS = 'WRT_NOT' AND d.GLOBALCONCLUSIONRECEIPT = '2'
       AND cl.SHORTAGEOREXCESS <> ' '
     
-    ORDER BY ISSUEDATE DESC
+    ORDER BY TO_DATE(d.ISSUEDATE, 'yyyymmdd') DESC
     ''')
 
     ws = wb.create_sheet('EMCS-DEPARTURE TEKORTEN')
@@ -138,6 +138,7 @@ if __name__ == '__main__':
             SUBSTR(cp.COMMERCIALREFERENCE,0, INSTR(cp.COMMERCIALREFERENCE, '-')-1) AS REF
             FROM PLDA.CPDECLARATION cp
             WHERE cp.ACTIVECOMPANY = 'ODC' AND cp.REGIMETYPE = 'A' AND cp.STATUSNUMBER_MESSAGE = 'REL_TRA'
+            ORDER BY ISSUEDATE DESC
     '''
                    )
     ws = wb.create_sheet('PLDA-EXPORT OPEN')
@@ -152,11 +153,11 @@ if __name__ == '__main__':
     mailer = sendmail.OverseasMail()
     mailer.sender = 'StreamReport@overseas.be'
     mailer.subject = f'Stream Report {date.today().strftime("%d %B %Y")}'
-    mailer.add_receiver('manueldemaerel@overseas.be')
+    mailer.add_receiver('svanpuyvelde@overseas.be')
     mailer.add_receiver('rheirman@overseas.be')
-    # mailer.add_receiver('orderprocessing@overseas.be')
-    # mailer.add_receiver('Declaration@overseas.be')
-    # mailer.add_receiver('PRubenska@overseas.be')
+    mailer.add_receiver('orderprocessing@overseas.be')
+    mailer.add_receiver('Declaration@overseas.be')
+
     mailer.add_attachment(report_name)
     content = """\
     Beste

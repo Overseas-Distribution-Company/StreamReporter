@@ -39,7 +39,7 @@ def write_cursor_to_sheet(sheet: worksheet.Worksheet, cursor: cx_Oracle.Cursor):
     cursor: cx_Oracle cursor prepared with the data
     """
 
-    header= [description[0] for description in cursor.description]
+    header = [description[0] for description in cursor.description]
     header.append('Customer No')
     header.append('Customer Name')
     sheet.append(header)
